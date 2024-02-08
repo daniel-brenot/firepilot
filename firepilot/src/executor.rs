@@ -366,7 +366,7 @@ impl Execute for FirecrackerExecutor {
         let command = Command::new(&self.exec_binary)
             .args(args)
             // FIXME: Implement logging
-            .stdin(Stdio::null())
+            .stdin(Stdio::inherit())
             .stdout(Stdio::inherit())
             .stderr(Stdio::inherit())
             .spawn()
