@@ -57,6 +57,7 @@ pub mod drive;
 pub mod executor;
 pub mod kernel;
 pub mod network_interface;
+pub mod vsock;
 
 fn assert_not_none<T>(key: &str, value: &Option<T>) -> Result<(), BuilderError> {
     match value {
