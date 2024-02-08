@@ -3,3 +3,6 @@
 fixtures
 *.iml
 examples
+firepilot/src/executor.rs
+firepilot/src/machine.rs
+firepilot/src/builder/mod.rs

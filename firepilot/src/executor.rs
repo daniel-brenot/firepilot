@@ -27,7 +27,7 @@ use tracing::{debug, error, info, instrument, trace};
 
 use crate::machine::FirepilotError;
 use firepilot_models::models::vm::Vm;
-use firepilot_models::models::{BootSource, Drive, NetworkInterface};
+use firepilot_models::models::{BootSource, Drive, NetworkInterface, Vsock};
 
 /// Interface to determine how to execute commands on the socket and where to do it
 pub trait Execute {
@@ -324,6 +324,24 @@ impl Executor {
         debug!("Creating workspace at {}", self.chroot().display());
         std::fs::create_dir_all(self.chroot())
             .map_err(|e| ExecuteError::WorkspaceCreation(e.to_string()))?;
+        Ok(())
+    }
+
+    #[instrument(skip_all, fields(id = %self.id))]
+    pub async fn configure_vsocks(
+        &self,
+        vsocks: Vec<Vsock>,
+    ) -> Result<(), ExecuteError> {
+        debug!("Configure vsocks");
+        for vsock in vsocks {
+            debug!("Configure vsock at {} with CID {}", vsock.uds_path, vsock.guest_cid);
+            let json =
+                serde_json::to_string(&vsock).map_err(ExecuteError::Serialize)?;
+
+            let path = format!("/vsocks");
+            let url: hyper::Uri = Uri::new(self.chroot().join("firecracker.socket"), &path).into();
+            self.send_request(url, Method::PUT, json).await?;
+        }
         Ok(())
     }
 }

@@ -133,6 +133,7 @@ impl Machine {
         self.executor.configure_drives(config.storage).await?;
         self.executor.configure_boot_source(kernel).await?;
         self.executor.configure_network(config.interfaces).await?;
+        self.executor.configure_vsocks(config.vsocks).await?;
         Ok(())
     }
 
