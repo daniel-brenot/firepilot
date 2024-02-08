@@ -338,7 +338,7 @@ impl Executor {
             let json =
                 serde_json::to_string(&vsock).map_err(ExecuteError::Serialize)?;
 
-            let path = format!("/vsocks");
+            let path = format!("/vsock");
             let url: hyper::Uri = Uri::new(self.chroot().join("firecracker.socket"), &path).into();
             self.send_request(url, Method::PUT, json).await?;
         }
